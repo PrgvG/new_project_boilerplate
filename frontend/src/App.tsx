@@ -127,7 +127,7 @@ function App() {
 
   return (
     <div className="app">
-      <h1>Pirmoney2</h1>
+      <h1>template</h1>
       <p>React + TypeScript + Vite</p>
 
       {/* Индикатор статуса MongoDB */}

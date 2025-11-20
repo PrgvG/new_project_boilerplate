@@ -11,7 +11,7 @@ cd "$PROJECT_ROOT" || exit 1
 echo "🚀 Запуск локальной разработки..."
 
 # Проверяем, запущен ли MongoDB
-if ! docker ps | grep -q pirmoney2-mongodb-dev; then
+if ! docker ps | grep -q template-mongodb-dev; then
   echo "📦 Запускаем MongoDB и Mongo Express..."
   docker-compose -f docker-compose.dev.yml up -d mongodb mongo-express
   echo "⏳ Ждем запуска MongoDB..."
@@ -19,7 +19,7 @@ if ! docker ps | grep -q pirmoney2-mongodb-dev; then
 else
   echo "✅ MongoDB уже запущен"
   # Проверяем, запущен ли Mongo Express
-  if ! docker ps | grep -q pirmoney2-mongo-express-dev; then
+  if ! docker ps | grep -q template-mongo-express-dev; then
     echo "📦 Запускаем Mongo Express..."
     docker-compose -f docker-compose.dev.yml up -d mongo-express
   else

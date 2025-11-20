@@ -1,4 +1,4 @@
-# Pirmoney2
+# template
 
 Full-stack application with React frontend and Express backend.
 

@@ -4,20 +4,20 @@
 services:
   mongodb:
     image: mongo:8.0
-    container_name: pirmoney2-mongodb-dev
+    container_name: template-mongodb-dev
     ports:
       - '27017:27017'
     environment:
       - MONGO_INITDB_ROOT_USERNAME=admin
       - MONGO_INITDB_ROOT_PASSWORD=password
-      - MONGO_INITDB_DATABASE=pirmoney2
+      - MONGO_INITDB_DATABASE=template
     volumes:
       - mongodb_data_dev:/data/db
     restart: unless-stopped
 
   mongo-express:
     image: mongo-express:latest
-    container_name: pirmoney2-mongo-express-dev
+    container_name: template-mongo-express-dev
     ports:
       - '8081:8081'
     environment:

@@ -69,7 +69,7 @@ cd ..
 
 Файл `backend/.env` должен содержать:
 ```env
-DATABASE_URL="mongodb://admin:password@localhost:27017/pirmoney2?authSource=admin"
+DATABASE_URL="mongodb://admin:password@localhost:27017/template?authSource=admin"
 PORT=3001
 NODE_ENV=development
 ```
@@ -142,7 +142,7 @@ docker-compose -f docker-compose.dev.yml down
 docker-compose -f docker-compose.dev.yml logs -f mongodb
 
 # Подключиться к MongoDB
-docker exec -it pirmoney2-mongodb-dev mongosh -u admin -p 'password' --authenticationDatabase admin
+docker exec -it template-mongodb-dev mongosh -u admin -p 'password' --authenticationDatabase admin
 ```
 
 ### Docker Compose (production-like)
@@ -296,7 +296,7 @@ docker-compose logs mongodb
 
 Для автоматического запуска MongoDB при загрузке системы:
 
-1. Создайте файл `~/Library/LaunchAgents/com.pirmoney2.mongodb.plist`:
+1. Создайте файл `~/Library/LaunchAgents/com.template.mongodb.plist`:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -304,12 +304,12 @@ docker-compose logs mongodb
 <plist version="1.0">
 <dict>
     <key>Label</key>
-    <string>com.pirmoney2.mongodb</string>
+    <string>com.template.mongodb</string>
     <key>ProgramArguments</key>
     <array>
         <string>/usr/local/bin/docker-compose</string>
         <string>-f</string>
-        <string>/Users/YOUR_USERNAME/Repos/pirmoney2/docker-compose.dev.yml</string>
+        <string>/Users/YOUR_USERNAME/Repos/template/docker-compose.dev.yml</string>
         <string>up</string>
         <string>-d</string>
         <string>mongodb</string>
@@ -317,7 +317,7 @@ docker-compose logs mongodb
     <key>RunAtLoad</key>
     <true/>
     <key>WorkingDirectory</key>
-    <string>/Users/YOUR_USERNAME/Repos/pirmoney2</string>
+    <string>/Users/YOUR_USERNAME/Repos/template</string>
 </dict>
 </plist>
 ```
@@ -326,6 +326,6 @@ docker-compose logs mongodb
 
 3. Загрузите:
 ```bash
-launchctl load ~/Library/LaunchAgents/com.pirmoney2.mongodb.plist
+launchctl load ~/Library/LaunchAgents/com.template.mongodb.plist
 ```
 

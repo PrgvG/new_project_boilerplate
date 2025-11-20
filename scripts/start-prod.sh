@@ -5,7 +5,7 @@
 echo "🚀 Запуск production окружения в Docker..."
 
 # Останавливаем dev MongoDB если запущен
-if docker ps | grep -q pirmoney2-mongodb-dev; then
+if docker ps | grep -q template-mongodb-dev; then
   echo "🛑 Останавливаем dev MongoDB..."
   docker-compose -f docker-compose.dev.yml down
 fi
