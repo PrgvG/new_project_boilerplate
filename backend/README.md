@@ -1,6 +1,6 @@
 # Backend
 
-Express backend with TypeScript, Prisma, and MongoDB.
+Express backend with TypeScript, Mongoose, and MongoDB.
 
 ## Setup
 
@@ -14,27 +14,13 @@ npm install
 cp .env.example .env
 ```
 
-3. Generate Prisma Client:
-```bash
-npm run prisma:generate
-```
-
-4. Run migrations (if needed):
-```bash
-npm run prisma:migrate
-```
+3. MongoDB подключение настраивается автоматически через переменные окружения.
 
 ## Development
 
 ```bash
 npm run dev
 ```
-
-## Prisma Commands
-
-- `npm run prisma:generate` - Generate Prisma Client
-- `npm run prisma:migrate` - Run database migrations
-- `npm run prisma:studio` - Open Prisma Studio (database GUI)
 
 ## Environment Variables
 

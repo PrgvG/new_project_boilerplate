@@ -4,7 +4,7 @@ Full-stack application with React frontend and Express backend.
 
 ## Structure
 
-- `backend/` - Express server with TypeScript, Prisma, and MongoDB
+- `backend/` - Express server with TypeScript, Mongoose, and MongoDB
 - `frontend/` - React application with TypeScript
 - `nginx/` - Nginx configuration
 - `mongodb/` - MongoDB database (via Docker)
@@ -42,9 +42,9 @@ cp backend/env.example backend/.env
 docker-compose -f docker-compose.dev.yml up -d mongodb
 ```
 
-4. **Генерация Prisma Client:**
+4. **Проверка подключения к MongoDB:**
 ```bash
-cd backend && npm run prisma:generate && cd ..
+# MongoDB должен быть запущен (см. шаг 3)
 ```
 
 5. **Запуск приложения:**
@@ -117,13 +117,7 @@ docker-compose down -v
 
 ### Database Setup
 
-```bash
-# Generate Prisma Client
-cd backend && npm run prisma:generate
-
-# Open Prisma Studio (database GUI)
-cd backend && npm run prisma:studio
-```
+MongoDB подключение настраивается через переменные окружения в `backend/.env` файле.
 
 ## Scripts
 
@@ -141,9 +135,6 @@ cd backend && npm run prisma:studio
 - `npm run dev` - Запустить в режиме разработки с hot reload
 - `npm run build` - Собрать для production
 - `npm run start` - Запустить production сборку
-- `npm run prisma:generate` - Сгенерировать Prisma Client
-- `npm run prisma:studio` - Открыть Prisma Studio (GUI для БД)
-- `npm run prisma:migrate` - Запустить миграции
 
 ### Frontend скрипты:
 - `npm run dev` - Запустить dev сервер (Vite)

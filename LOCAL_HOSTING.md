@@ -11,10 +11,9 @@ npm install
 # 2. Запустить MongoDB
 ./scripts/start-dev.sh
 
-# 3. Настроить Prisma
+# 3. Настроить переменные окружения
 cd backend
 cp env.example .env
-npm run prisma:generate
 cd ..
 
 # 4. Запустить приложение
@@ -93,13 +92,9 @@ docker ps | grep mongodb
 docker-compose up -d --build
 ```
 
-### Шаг 4: Генерация Prisma Client
+### Шаг 4: Проверка подключения к MongoDB
 
-```bash
-cd backend
-npm run prisma:generate
-cd ..
-```
+MongoDB подключение настраивается автоматически через переменные окружения в `backend/.env` файле.
 
 ### Шаг 5: Запуск приложения
 
@@ -172,21 +167,6 @@ docker-compose down -v
 ---
 
 ## Полезные команды
-
-### Prisma
-
-```bash
-cd backend
-
-# Генерация Prisma Client
-npm run prisma:generate
-
-# Открыть Prisma Studio (GUI для БД)
-npm run prisma:studio
-
-# Создать миграцию
-npm run prisma:migrate
-```
 
 ### Проверка работы
 
@@ -266,14 +246,6 @@ docker-compose -f docker-compose.dev.yml logs mongodb
 # Пересоздать контейнер
 docker-compose -f docker-compose.dev.yml down -v
 docker-compose -f docker-compose.dev.yml up -d mongodb
-```
-
-### Prisma Client не генерируется
-
-```bash
-cd backend
-rm -rf node_modules/.prisma
-npm run prisma:generate
 ```
 
 ### Ошибки подключения к БД
