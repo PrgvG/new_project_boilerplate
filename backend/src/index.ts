@@ -2,8 +2,8 @@ import 'dotenv/config';
 import express, { Express, Request, Response } from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
-import { connectDB, disconnectDB } from './lib/mongoose.js';
-import User from './models/User.js';
+import { connectDB, disconnectDB } from './lib/mongoose';
+import User from './models/User';
 
 const app: Express = express();
 const PORT = process.env.PORT || 3001;
