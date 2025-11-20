@@ -4,15 +4,9 @@
 
 echo "🚀 Запуск production окружения в Docker..."
 
-# Останавливаем dev MongoDB если запущен
-if docker ps | grep -q template-mongodb-dev; then
-  echo "🛑 Останавливаем dev MongoDB..."
-  docker-compose -f docker-compose.dev.yml down
-fi
-
 # Запускаем все сервисы
 echo "📦 Запускаем все сервисы..."
-docker-compose up -d --build
+docker-compose -p template-prod up -d --build
 
 echo "✅ Все сервисы запущены!"
 echo ""
@@ -21,7 +15,8 @@ echo "   Frontend: http://localhost"
 echo "   Backend API: http://localhost/api"
 echo "   Backend напрямую: http://localhost:3001"
 echo "   Health check: http://localhost/health"
+echo "   Mongo Express: http://localhost:8082 (логин: admin, пароль: admin)"
 echo ""
-echo "📊 Просмотр логов: docker-compose logs -f"
-echo "🛑 Остановка: docker-compose down"
+echo "📊 Просмотр логов: docker-compose -p template-prod logs -f"
+echo "🛑 Остановка: docker-compose -p template-prod down"
 

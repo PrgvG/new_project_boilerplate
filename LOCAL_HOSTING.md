@@ -68,7 +68,8 @@ cd ..
 
 Файл `backend/.env` должен содержать:
 ```env
-DATABASE_URL="mongodb://admin:password@localhost:27017/template?authSource=admin"
+# Для dev окружения используйте порт 27018
+DATABASE_URL="mongodb://admin:password@localhost:27018/template?authSource=admin"
 PORT=3001
 NODE_ENV=development
 ```
@@ -79,7 +80,7 @@ NODE_ENV=development
 
 ```bash
 # Запустить только MongoDB
-docker-compose -f docker-compose.dev.yml up -d mongodb
+docker-compose -p template-dev -f docker-compose.dev.yml up -d mongodb
 
 # Проверить статус
 docker ps | grep mongodb
@@ -89,7 +90,7 @@ docker ps | grep mongodb
 
 ```bash
 # Запустить все сервисы
-docker-compose up -d --build
+docker-compose -p template-prod up -d --build
 ```
 
 ### Шаг 4: Проверка подключения к MongoDB
@@ -117,24 +118,24 @@ cd frontend && npm run dev
 #### Production-like (Docker):
 
 ```bash
-docker-compose up -d
+docker-compose -p template-prod up -d
 ```
 
 ---
 
 ## Управление сервисами
 
-### MongoDB
+### MongoDB (dev окружение)
 
 ```bash
 # Запустить
-docker-compose -f docker-compose.dev.yml up -d mongodb
+docker-compose -p template-dev -f docker-compose.dev.yml up -d mongodb
 
 # Остановить
-docker-compose -f docker-compose.dev.yml down
+docker-compose -p template-dev -f docker-compose.dev.yml down
 
 # Просмотр логов
-docker-compose -f docker-compose.dev.yml logs -f mongodb
+docker-compose -p template-dev -f docker-compose.dev.yml logs -f mongodb
 
 # Подключиться к MongoDB
 docker exec -it template-mongodb-dev mongosh -u admin -p 'password' --authenticationDatabase admin
@@ -144,24 +145,24 @@ docker exec -it template-mongodb-dev mongosh -u admin -p 'password' --authentica
 
 ```bash
 # Запустить все сервисы
-docker-compose up -d
+docker-compose -p template-prod up -d
 
 # Остановить все сервисы
-docker-compose down
+docker-compose -p template-prod down
 
 # Пересобрать и запустить
-docker-compose up -d --build
+docker-compose -p template-prod up -d --build
 
 # Просмотр логов
-docker-compose logs -f
+docker-compose -p template-prod logs -f
 
 # Просмотр логов конкретного сервиса
-docker-compose logs -f backend
-docker-compose logs -f frontend
-docker-compose logs -f mongodb
+docker-compose -p template-prod logs -f backend
+docker-compose -p template-prod logs -f frontend
+docker-compose -p template-prod logs -f mongodb
 
 # Остановить и удалить volumes
-docker-compose down -v
+docker-compose -p template-prod down -v
 ```
 
 ---
@@ -189,7 +190,10 @@ curl http://localhost/api  # через Nginx
 - **3000** - Frontend (Vite dev server)
 - **3001** - Backend (Express)
 - **80** - Frontend через Nginx (Docker)
-- **27017** - MongoDB
+- **27017** - MongoDB (prod окружение, docker-compose.yml)
+- **27018** - MongoDB (dev окружение, docker-compose.dev.yml)
+- **8081** - Mongo Express (dev окружение, docker-compose.dev.yml)
+- **8082** - Mongo Express (prod окружение, docker-compose.yml)
 
 ## Доступ из локальной сети
 
@@ -231,7 +235,8 @@ ipconfig
 # Найти процесс, использующий порт
 lsof -i :3001
 lsof -i :3000
-lsof -i :27017
+lsof -i :27017  # MongoDB prod
+lsof -i :27018  # MongoDB dev
 
 # Остановить процесс
 kill <PID>
@@ -241,11 +246,11 @@ kill <PID>
 
 ```bash
 # Проверить логи
-docker-compose -f docker-compose.dev.yml logs mongodb
+docker-compose -p template-dev -f docker-compose.dev.yml logs mongodb
 
 # Пересоздать контейнер
-docker-compose -f docker-compose.dev.yml down -v
-docker-compose -f docker-compose.dev.yml up -d mongodb
+docker-compose -p template-dev -f docker-compose.dev.yml down -v
+docker-compose -p template-dev -f docker-compose.dev.yml up -d mongodb
 ```
 
 ### Ошибки подключения к БД
@@ -259,7 +264,11 @@ docker ps | grep mongodb
 
 3. Проверьте логи:
 ```bash
-docker-compose logs mongodb
+# Для dev окружения:
+docker-compose -p template-dev -f docker-compose.dev.yml logs mongodb
+
+# Для prod окружения:
+docker-compose -p template-prod logs mongodb
 ```
 
 ---

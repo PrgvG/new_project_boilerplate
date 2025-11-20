@@ -39,7 +39,7 @@ cp backend/env.example backend/.env
 ./scripts/start-dev.sh
 
 # Или вручную:
-docker-compose -f docker-compose.dev.yml up -d mongodb
+docker-compose -p template-dev -f docker-compose.dev.yml up -d mongodb
 ```
 
 4. **Проверка подключения к MongoDB:**
@@ -63,7 +63,8 @@ cd frontend && npm run dev
 **Доступ:**
 - Frontend: `http://localhost:3000`
 - Backend: `http://localhost:3001`
-- MongoDB: `localhost:27017`
+- MongoDB (dev): `localhost:27018`
+- Mongo Express (dev): `http://localhost:8081` (логин: admin, пароль: admin)
 
 ---
 
@@ -82,7 +83,7 @@ cd frontend && npm run dev
 ./scripts/start-prod.sh
 
 # Или вручную:
-docker-compose up -d --build
+docker-compose -p template-prod up -d --build
 ```
 
 2. **Проверка статуса:**
@@ -95,22 +96,24 @@ docker-compose ps
 - Backend API: `http://localhost/api`
 - Backend напрямую: `http://localhost:3001`
 - Health check: `http://localhost/health`
+- MongoDB (prod): `localhost:27017`
+- Mongo Express (prod): `http://localhost:8082` (логин: admin, пароль: admin)
 
 **Управление:**
 ```bash
 # Просмотр логов
-docker-compose logs -f
+docker-compose -p template-prod logs -f
 
 # Просмотр логов конкретного сервиса
-docker-compose logs -f backend
-docker-compose logs -f frontend
-docker-compose logs -f mongodb
+docker-compose -p template-prod logs -f backend
+docker-compose -p template-prod logs -f frontend
+docker-compose -p template-prod logs -f mongodb
 
 # Остановка
-docker-compose down
+docker-compose -p template-prod down
 
 # Остановка с удалением volumes
-docker-compose down -v
+docker-compose -p template-prod down -v
 ```
 
 ---
@@ -118,6 +121,12 @@ docker-compose down -v
 ### Database Setup
 
 MongoDB подключение настраивается через переменные окружения в `backend/.env` файле.
+
+**Важно:** 
+- **Dev окружение** (`docker-compose.dev.yml`) использует порт **27018** на хосте и имя проекта **template-dev**
+- **Prod окружение** (`docker-compose.yml`) использует порт **27017** на хосте и имя проекта **template-prod**
+- Это позволяет запускать оба инстанса MongoDB одновременно без конфликтов портов и контейнеров
+- При использовании команд docker-compose вручную всегда указывайте имя проекта: `-p template-dev` или `-p template-prod`
 
 ## Scripts
 

@@ -14,13 +14,31 @@ services:
       - template-network
     restart: unless-stopped
 
+  mongo-express:
+    image: mongo-express:latest
+    container_name: template-mongo-express
+    ports:
+      - '8082:8081'
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=admin
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=password
+      - ME_CONFIG_MONGODB_SERVER=mongodb
+      - ME_CONFIG_MONGODB_PORT=27017
+      - ME_CONFIG_BASICAUTH_USERNAME=admin
+      - ME_CONFIG_BASICAUTH_PASSWORD=admin
+    depends_on:
+      - mongodb
+    networks:
+      - template-network
+    restart: unless-stopped
+
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
     container_name: template-backend
     ports:
-      - '3001:3001'
+      - '3002:3001'
     environment:
       - NODE_ENV=production
       - PORT=3001
@@ -50,4 +68,3 @@ networks:
 
 volumes:
   mongodb_data:
-
