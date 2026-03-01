@@ -10,7 +10,7 @@ export type AuthenticatedRequest = Request & {
   user?: JwtPayload;
 };
 
-function isJwtPayload(decoded: string | JwtPayload): decoded is JwtPayload {
+function isJwtPayload(decoded: unknown): decoded is JwtPayload {
   if (typeof decoded !== 'object' || decoded === null) return false;
   const d = decoded as Record<string, unknown>;
   return typeof d.userId === 'string' && typeof d.email === 'string';
@@ -44,7 +44,7 @@ export const authMiddleware = (
   }
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
+    const decoded = jwt.verify(token, JWT_SECRET) as unknown;
     if (isJwtPayload(decoded)) {
       req.user = decoded;
       next();

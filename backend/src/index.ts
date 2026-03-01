@@ -1,52 +1,46 @@
 import 'dotenv/config';
-import express, { Express, Request, Response } from 'express';
+import express, { Express } from 'express';
 import cors from 'cors';
-import mongoose from 'mongoose';
+import helmet from 'helmet';
+import pinoHttp from 'pino-http';
 import { connectDB, disconnectDB } from './lib/mongoose';
-import User from './models/User';
+import { logger } from './lib/logger';
 import authRouter from './routes/auth';
-import { authMiddleware } from './middleware/auth';
+import usersRouter from './routes/users';
+import healthRouter from './routes/health';
+import apiRouter from './routes/api';
+import { errorHandler, notFound } from './middleware/errorHandler';
+import { rateLimiter, authRateLimiter } from './middleware/rateLimit';
 
 const app: Express = express();
 const PORT = process.env.PORT || 3001;
 
 app.use(cors());
+app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(rateLimiter);
 
-// Health check with database connection
-app.get('/health', (req: Request, res: Response) => {
-  const state = mongoose.connection.readyState;
-  // 0 = disconnected, 1 = connected, 2 = connecting, 3 = disconnecting
-  const isConnected = state === 1;
+app.use(
+  pinoHttp({
+    logger,
+    serializers: {
+      req: req => ({
+        method: req.method,
+        url: req.url,
+        // body не логируем, чтобы не попадали пароли
+      }),
+    },
+  })
+);
 
-  const response = {
-    status: 'ok',
-    message: 'Backend is running',
-    database: isConnected ? 'connected' : 'disconnected',
-    databaseState: state,
-  };
+app.use('/health', healthRouter);
+app.use('/api/auth', authRateLimiter, authRouter);
+app.use('/api/users', usersRouter);
+app.use('/api', apiRouter);
 
-  res.json(response);
-});
-
-app.get('/api', (req: Request, res: Response) => {
-  res.json({ message: 'Hello from Express API' });
-});
-
-app.use('/api/auth', authRouter);
-
-// Protected: список пользователей (только для авторизованных)
-app.get('/api/users', authMiddleware, async (req: Request, res: Response) => {
-  try {
-    const users = await User.find().lean();
-    res.json(users);
-  } catch (error) {
-    res.status(500).json({
-      error: error instanceof Error ? error.message : 'Failed to fetch users',
-    });
-  }
-});
+app.use(notFound);
+app.use(errorHandler);
 
 // Graceful shutdown
 process.on('SIGINT', async () => {
@@ -62,16 +56,16 @@ process.on('SIGTERM', async () => {
 // Запуск сервера
 const startServer = async () => {
   if (!process.env.JWT_SECRET) {
-    console.error('❌ JWT_SECRET environment variable is not set');
+    logger.error('JWT_SECRET environment variable is not set');
     process.exit(1);
   }
   try {
     await connectDB();
     app.listen(PORT, () => {
-      console.log(`🚀 Server is running on port ${PORT}`);
+      logger.info({ port: PORT }, 'Server is running');
     });
   } catch (error) {
-    console.error('❌ Failed to start server:', error);
+    logger.error({ err: error }, 'Failed to start server');
     process.exit(1);
   }
 };
