@@ -8,6 +8,7 @@ import { authMiddleware } from '../middleware/auth';
 import { wrapAsync } from '../middleware/asyncHandler';
 import { validateRegisterBody, validateLoginBody } from './authValidation';
 import { AppError } from '../lib/errors';
+import { parseExpiresIn } from '../lib/jwt';
 
 const router = Router();
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -17,7 +18,9 @@ function createToken(payload: JwtPayload): string {
   if (!JWT_SECRET) {
     throw new Error('JWT_SECRET is not set');
   }
-  const options: jwt.SignOptions = { expiresIn: Number(JWT_EXPIRES_IN) };
+  const options: jwt.SignOptions = {
+    expiresIn: parseExpiresIn(JWT_EXPIRES_IN),
+  };
   return jwt.sign(payload, JWT_SECRET, options);
 }
 
