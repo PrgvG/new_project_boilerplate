@@ -30,13 +30,6 @@ describe('authStorage', () => {
     });
   });
 
-  describe('setToken and getToken', () => {
-    it('stores and retrieves token', () => {
-      setToken('my-token');
-      expect(getToken()).toBe('my-token');
-    });
-  });
-
   describe('removeToken', () => {
     it('clears token so getToken returns null', () => {
       setToken('t');

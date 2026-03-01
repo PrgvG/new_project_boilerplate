@@ -52,7 +52,78 @@ describe('apiFetch', () => {
     await apiFetch('/api/x');
 
     expect(mockRemoveToken).toHaveBeenCalled();
-    // callback is null, so it should not throw
+  });
+
+  it('adds Authorization header when token exists', async () => {
+    mockGetToken.mockReturnValue('my-token');
+    const fetchSpy = vi
+      .fn()
+      .mockResolvedValue(createMockResponse());
+    vi.stubGlobal('fetch', fetchSpy);
+
+    await apiFetch('/api/test');
+
+    const [, init] = fetchSpy.mock.calls[0] as [string, RequestInit];
+    expect((init.headers as Record<string, string>)['Authorization']).toBe(
+      'Bearer my-token'
+    );
+  });
+
+  it('does not add Authorization header when token is null', async () => {
+    mockGetToken.mockReturnValue(null);
+    const fetchSpy = vi
+      .fn()
+      .mockResolvedValue(createMockResponse());
+    vi.stubGlobal('fetch', fetchSpy);
+
+    await apiFetch('/api/test');
+
+    const [, init] = fetchSpy.mock.calls[0] as [string, RequestInit];
+    expect(
+      (init.headers as Record<string, string>)['Authorization']
+    ).toBeUndefined();
+  });
+
+  it('sets Content-Type and stringifies body when body is an object', async () => {
+    const fetchSpy = vi
+      .fn()
+      .mockResolvedValue(createMockResponse());
+    vi.stubGlobal('fetch', fetchSpy);
+
+    await apiFetch('/api/test', { body: { key: 'value' } });
+
+    const [, init] = fetchSpy.mock.calls[0] as [string, RequestInit];
+    expect((init.headers as Record<string, string>)['Content-Type']).toBe(
+      'application/json'
+    );
+    expect(init.body).toBe('{"key":"value"}');
+  });
+
+  it('does not set Content-Type when body is a string', async () => {
+    const fetchSpy = vi
+      .fn()
+      .mockResolvedValue(createMockResponse());
+    vi.stubGlobal('fetch', fetchSpy);
+
+    await apiFetch('/api/test', { body: 'raw-string' });
+
+    const [, init] = fetchSpy.mock.calls[0] as [string, RequestInit];
+    expect(
+      (init.headers as Record<string, string>)['Content-Type']
+    ).toBeUndefined();
+    expect(init.body).toBe('raw-string');
+  });
+
+  it('prepends slash to path when missing', async () => {
+    const fetchSpy = vi
+      .fn()
+      .mockResolvedValue(createMockResponse());
+    vi.stubGlobal('fetch', fetchSpy);
+
+    await apiFetch('api/test');
+
+    const [url] = fetchSpy.mock.calls[0] as [string];
+    expect(url).toBe('/api/test');
   });
 });
 

@@ -3,6 +3,7 @@ import {
   isAuthResponse,
   isUser,
   isUserArray,
+  isApiMessage,
   hasFromPath,
   getFromPath,
 } from './guards';
@@ -90,6 +91,24 @@ describe('isUserArray', () => {
   it('returns false for non-array', () => {
     expect(isUserArray(null)).toBe(false);
     expect(isUserArray({})).toBe(false);
+  });
+});
+
+describe('isApiMessage', () => {
+  it('returns true for object with string message', () => {
+    expect(isApiMessage({ message: 'hello' })).toBe(true);
+  });
+
+  it('returns false when message is not a string', () => {
+    expect(isApiMessage({ message: 123 })).toBe(false);
+  });
+
+  it('returns false for null', () => {
+    expect(isApiMessage(null)).toBe(false);
+  });
+
+  it('returns false for object without message', () => {
+    expect(isApiMessage({})).toBe(false);
   });
 });
 
