@@ -1,13 +1,14 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
 
 // Интерфейс для документа User
-export interface IUser extends Document {
+export type IUser = Document & {
   _id: mongoose.Types.ObjectId;
   email: string;
   name?: string;
+  passwordHash: string;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
 // Схема User
 const UserSchema = new Schema<IUser>(
@@ -22,6 +23,11 @@ const UserSchema = new Schema<IUser>(
     name: {
       type: String,
       trim: true,
+    },
+    passwordHash: {
+      type: String,
+      required: true,
+      select: false,
     },
   },
   {

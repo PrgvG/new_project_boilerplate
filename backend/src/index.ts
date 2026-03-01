@@ -4,6 +4,8 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import { connectDB, disconnectDB } from './lib/mongoose';
 import User from './models/User';
+import authRouter from './routes/auth';
+import { authMiddleware } from './middleware/auth';
 
 const app: Express = express();
 const PORT = process.env.PORT || 3001;
@@ -32,47 +34,16 @@ app.get('/api', (req: Request, res: Response) => {
   res.json({ message: 'Hello from Express API' });
 });
 
-// Example API endpoint with Mongoose
-app.get('/api/users', async (req: Request, res: Response) => {
+app.use('/api/auth', authRouter);
+
+// Protected: список пользователей (только для авторизованных)
+app.get('/api/users', authMiddleware, async (req: Request, res: Response) => {
   try {
     const users = await User.find().lean();
     res.json(users);
   } catch (error) {
     res.status(500).json({
       error: error instanceof Error ? error.message : 'Failed to fetch users',
-    });
-  }
-});
-
-// Create user endpoint
-app.post('/api/users', async (req: Request, res: Response) => {
-  try {
-    const { email, name } = req.body;
-
-    if (!email) {
-      return res.status(400).json({
-        error: 'Email is required',
-      });
-    }
-
-    // Проверяем, существует ли пользователь с таким email
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(409).json({
-        error: 'User with this email already exists',
-      });
-    }
-
-    const user = new User({
-      email,
-      name: name || undefined,
-    });
-
-    await user.save();
-    res.status(201).json(user.toObject());
-  } catch (error) {
-    res.status(500).json({
-      error: error instanceof Error ? error.message : 'Failed to create user',
     });
   }
 });
@@ -90,6 +61,10 @@ process.on('SIGTERM', async () => {
 
 // Запуск сервера
 const startServer = async () => {
+  if (!process.env.JWT_SECRET) {
+    console.error('❌ JWT_SECRET environment variable is not set');
+    process.exit(1);
+  }
   try {
     await connectDB();
     app.listen(PORT, () => {
