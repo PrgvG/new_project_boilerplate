@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useNavigate, Link } from '@tanstack/react-router';
-import { useAuth } from '../../contexts/authState';
+import { useAuth } from '../../contexts/useAuth';
 import { apiJson } from '../../api/client';
 import { isAuthResponse } from '../../types/guards';
+import styles from './Registration.module.css';
 
 export function RegisterPage() {
   const [email, setEmail] = useState('');
@@ -40,14 +41,11 @@ export function RegisterPage() {
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: '2rem auto', padding: '1.5rem' }}>
+    <div className={styles.container}>
       <h1>Регистрация</h1>
       <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: '1rem' }}>
-          <label
-            htmlFor="reg-email"
-            style={{ display: 'block', marginBottom: '0.5rem' }}
-          >
+        <div className={styles.fieldGroup}>
+          <label htmlFor="reg-email" className={styles.label}>
             Email
           </label>
           <input
@@ -58,19 +56,11 @@ export function RegisterPage() {
             required
             disabled={submitting}
             autoComplete="email"
-            style={{
-              width: '100%',
-              padding: '0.5rem',
-              border: '1px solid #ddd',
-              borderRadius: '4px',
-            }}
+            className={styles.input}
           />
         </div>
-        <div style={{ marginBottom: '1rem' }}>
-          <label
-            htmlFor="reg-password"
-            style={{ display: 'block', marginBottom: '0.5rem' }}
-          >
+        <div className={styles.fieldGroup}>
+          <label htmlFor="reg-password" className={styles.label}>
             Пароль (не менее 8 символов)
           </label>
           <input
@@ -82,19 +72,11 @@ export function RegisterPage() {
             minLength={8}
             disabled={submitting}
             autoComplete="new-password"
-            style={{
-              width: '100%',
-              padding: '0.5rem',
-              border: '1px solid #ddd',
-              borderRadius: '4px',
-            }}
+            className={styles.input}
           />
         </div>
-        <div style={{ marginBottom: '1rem' }}>
-          <label
-            htmlFor="reg-name"
-            style={{ display: 'block', marginBottom: '0.5rem' }}
-          >
+        <div className={styles.fieldGroup}>
+          <label htmlFor="reg-name" className={styles.label}>
             Имя (необязательно)
           </label>
           <input
@@ -104,44 +86,19 @@ export function RegisterPage() {
             onChange={e => setName(e.target.value)}
             disabled={submitting}
             autoComplete="name"
-            style={{
-              width: '100%',
-              padding: '0.5rem',
-              border: '1px solid #ddd',
-              borderRadius: '4px',
-            }}
+            className={styles.input}
           />
         </div>
-        {error && (
-          <div
-            style={{
-              marginBottom: '1rem',
-              padding: '0.75rem',
-              backgroundColor: '#f8d7da',
-              color: '#721c24',
-              borderRadius: '4px',
-            }}
-          >
-            {error}
-          </div>
-        )}
+        {error && <div className={styles.error}>{error}</div>}
         <button
           type="submit"
           disabled={submitting}
-          style={{
-            width: '100%',
-            padding: '0.75rem',
-            backgroundColor: submitting ? '#6c757d' : '#28a745',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: submitting ? 'not-allowed' : 'pointer',
-          }}
+          className={styles.registerButton}
         >
           {submitting ? 'Регистрация...' : 'Зарегистрироваться'}
         </button>
       </form>
-      <p style={{ marginTop: '1rem' }}>
+      <p className={styles.footer}>
         Уже есть аккаунт? <Link to="/login">Войти</Link>
       </p>
     </div>

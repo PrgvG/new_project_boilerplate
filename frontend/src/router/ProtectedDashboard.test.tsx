@@ -1,13 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { AuthContext } from '../contexts/authState';
+import { AuthContext } from '../contexts/useAuth';
 import { ProtectedDashboard } from './ProtectedDashboard';
-
-const mockNavigate = vi.fn();
-
-vi.mock('@tanstack/react-router', () => ({
-  useNavigate: () => mockNavigate,
-}));
 
 vi.mock('../pages/Dashboard', () => ({
   Dashboard: () => <div>Dashboard content</div>,
@@ -40,20 +34,18 @@ function renderWithAuth(value: {
 }
 
 describe('ProtectedDashboard', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
   it('shows loading when isLoading is true', () => {
     renderWithAuth({ isLoading: true, isAuthenticated: false });
     expect(screen.getByText('Загрузка...')).toBeInTheDocument();
     expect(screen.queryByText('Dashboard content')).not.toBeInTheDocument();
   });
 
-  it('calls navigate to /login when not loading and not authenticated', () => {
-    renderWithAuth({ isLoading: false, isAuthenticated: false });
-    expect(mockNavigate).toHaveBeenCalledWith({ to: '/login' });
-    expect(screen.queryByText('Dashboard content')).not.toBeInTheDocument();
+  it('renders nothing when not authenticated', () => {
+    const { container } = renderWithAuth({
+      isLoading: false,
+      isAuthenticated: false,
+    });
+    expect(container.innerHTML).toBe('');
   });
 
   it('renders Dashboard when authenticated', () => {

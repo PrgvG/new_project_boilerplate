@@ -1,9 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
-import { useAuth } from '../contexts/authState';
+import { useAuth } from '../contexts/useAuth';
 import { apiJson } from '../api/client';
-import { isUserArray } from '../types/guards';
+import { isUserArray, isApiMessage } from '../types/guards';
 import { HealthStatusBar, fetchHealth } from '../modules/health';
 import type { DbStatus } from '../modules/health';
+import styles from './Dashboard.module.css';
 
 function useUsersQuery() {
   return useQuery({
@@ -16,8 +17,7 @@ function useApiMessageQuery() {
   return useQuery({
     queryKey: ['apiMessage'],
     queryFn: async () => {
-      const res = await fetch('/api');
-      const data = (await res.json()) as { message: string };
+      const data = await apiJson('/api', {}, isApiMessage);
       return data.message;
     },
   });
@@ -59,18 +59,11 @@ export function Dashboard() {
 
   return (
     <div className="app">
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '1rem',
-        }}
-      >
+      <div className={styles.header}>
         <h1>template</h1>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        <div className={styles.headerRight}>
           {user && (
-            <span style={{ fontSize: '0.9rem', color: '#666' }}>
+            <span className={styles.userInfo}>
               {user.email}
               {user.name ? ` (${user.name})` : ''}
             </span>
@@ -78,15 +71,7 @@ export function Dashboard() {
           <button
             type="button"
             onClick={logout}
-            style={{
-              padding: '0.5rem 1rem',
-              backgroundColor: '#dc3545',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              fontWeight: '500',
-            }}
+            className={styles.logoutButton}
           >
             Выйти
           </button>
@@ -98,26 +83,18 @@ export function Dashboard() {
 
       {message && <p>Backend message: {message}</p>}
 
-      <div style={{ marginTop: '1rem', marginBottom: '1rem' }}>
+      <div>
         <a
           href="http://localhost:8081"
           target="_blank"
           rel="noopener noreferrer"
-          style={{
-            display: 'inline-block',
-            padding: '0.5rem 1rem',
-            backgroundColor: '#007bff',
-            color: 'white',
-            textDecoration: 'none',
-            borderRadius: '4px',
-            fontWeight: '500',
-          }}
+          className={styles.mongoLink}
         >
           Открыть веб-морду MongoDB (Mongo Express)
         </a>
       </div>
 
-      <div style={{ marginTop: '2rem' }}>
+      <div className={styles.usersSection}>
         <h2>Пользователи из MongoDB</h2>
         {loading && <p>Загрузка пользователей...</p>}
         {error && <p style={{ color: 'red' }}>Ошибка: {error}</p>}
@@ -126,18 +103,9 @@ export function Dashboard() {
             {users.length === 0 ? (
               <p>Пользователей пока нет в базе данных</p>
             ) : (
-              <ul style={{ listStyle: 'none', padding: 0 }}>
+              <ul className={styles.userList}>
                 {users.map(u => (
-                  <li
-                    key={u._id}
-                    style={{
-                      padding: '1rem',
-                      margin: '0.5rem 0',
-                      border: '1px solid #ddd',
-                      borderRadius: '4px',
-                      backgroundColor: '#f9f9f9',
-                    }}
-                  >
+                  <li key={u._id} className={styles.userCard}>
                     <strong>Email:</strong> {u.email}
                     {u.name && (
                       <>
@@ -146,7 +114,7 @@ export function Dashboard() {
                       </>
                     )}
                     <br />
-                    <small style={{ color: '#666' }}>
+                    <small className={styles.userMeta}>
                       Создан: {new Date(u.createdAt).toLocaleString('ru-RU')}
                     </small>
                   </li>

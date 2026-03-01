@@ -4,7 +4,7 @@ import { setOnUnauthorized } from '../api/client';
 import { apiJson } from '../api/client';
 import type { User } from '../types';
 import { isUser } from '../types/guards';
-import { AuthContext } from './authState';
+import { AuthContext } from './useAuth';
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);

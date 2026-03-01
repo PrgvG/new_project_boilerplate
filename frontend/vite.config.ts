@@ -15,6 +15,9 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
       },
       manifest: {
+        name: 'Template App',
+        short_name: 'Template',
+        display: 'standalone',
         theme_color: '#1976d2',
         background_color: '#ffffff',
         icons: [

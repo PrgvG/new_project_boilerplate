@@ -1,8 +1,11 @@
+import { Link } from '@tanstack/react-router';
+import styles from './NotFoundPage.module.css';
+
 export function NotFoundPage() {
   return (
-    <div style={{ padding: '2rem', textAlign: 'center' }}>
+    <div className={styles.container}>
       <p>Страница не найдена</p>
-      <a href="/">На главную</a>
+      <Link to="/">На главную</Link>
     </div>
   );
 }

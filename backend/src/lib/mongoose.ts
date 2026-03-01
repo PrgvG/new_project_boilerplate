@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import mongoose from 'mongoose';
+import { logger } from './logger';
 
 const databaseUrl = process.env.DATABASE_URL;
 
@@ -7,36 +8,32 @@ if (!databaseUrl) {
   throw new Error('DATABASE_URL environment variable is not set');
 }
 
-// Подключение к MongoDB
 export const connectDB = async (): Promise<void> => {
   try {
     await mongoose.connect(databaseUrl);
-    console.log('✅ MongoDB connected successfully');
+    logger.info('MongoDB connected successfully');
   } catch (error) {
-    console.error('❌ MongoDB connection error:', error);
+    logger.error(error, 'MongoDB connection error');
     throw error;
   }
 };
 
-// Отключение от MongoDB
 export const disconnectDB = async (): Promise<void> => {
   try {
     await mongoose.disconnect();
-    console.log('✅ MongoDB disconnected');
+    logger.info('MongoDB disconnected');
   } catch (error) {
-    console.error('❌ MongoDB disconnection error:', error);
+    logger.error(error, 'MongoDB disconnection error');
     throw error;
   }
 };
 
-// Обработка ошибок подключения
 mongoose.connection.on('error', error => {
-  console.error('MongoDB connection error:', error);
+  logger.error(error, 'MongoDB connection error');
 });
 
 mongoose.connection.on('disconnected', () => {
-  console.log('MongoDB disconnected');
+  logger.info('MongoDB disconnected');
 });
 
-// Экспортируем mongoose для использования в моделях
 export default mongoose;

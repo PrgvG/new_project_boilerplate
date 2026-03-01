@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useNavigate, useRouterState, Link } from '@tanstack/react-router';
-import { useAuth } from '../../contexts/authState';
+import { useAuth } from '../../contexts/useAuth';
 import { apiJson } from '../../api/client';
 import { getFromPath, isAuthResponse } from '../../types/guards';
+import styles from './Registration.module.css';
 
 export function LoginPage() {
   const [email, setEmail] = useState('');
@@ -39,14 +40,11 @@ export function LoginPage() {
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: '2rem auto', padding: '1.5rem' }}>
+    <div className={styles.container}>
       <h1>Вход</h1>
       <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: '1rem' }}>
-          <label
-            htmlFor="login-email"
-            style={{ display: 'block', marginBottom: '0.5rem' }}
-          >
+        <div className={styles.fieldGroup}>
+          <label htmlFor="login-email" className={styles.label}>
             Email
           </label>
           <input
@@ -57,19 +55,11 @@ export function LoginPage() {
             required
             disabled={submitting}
             autoComplete="email"
-            style={{
-              width: '100%',
-              padding: '0.5rem',
-              border: '1px solid #ddd',
-              borderRadius: '4px',
-            }}
+            className={styles.input}
           />
         </div>
-        <div style={{ marginBottom: '1rem' }}>
-          <label
-            htmlFor="login-password"
-            style={{ display: 'block', marginBottom: '0.5rem' }}
-          >
+        <div className={styles.fieldGroup}>
+          <label htmlFor="login-password" className={styles.label}>
             Пароль
           </label>
           <input
@@ -80,44 +70,19 @@ export function LoginPage() {
             required
             disabled={submitting}
             autoComplete="current-password"
-            style={{
-              width: '100%',
-              padding: '0.5rem',
-              border: '1px solid #ddd',
-              borderRadius: '4px',
-            }}
+            className={styles.input}
           />
         </div>
-        {error && (
-          <div
-            style={{
-              marginBottom: '1rem',
-              padding: '0.75rem',
-              backgroundColor: '#f8d7da',
-              color: '#721c24',
-              borderRadius: '4px',
-            }}
-          >
-            {error}
-          </div>
-        )}
+        {error && <div className={styles.error}>{error}</div>}
         <button
           type="submit"
           disabled={submitting}
-          style={{
-            width: '100%',
-            padding: '0.75rem',
-            backgroundColor: submitting ? '#6c757d' : '#007bff',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: submitting ? 'not-allowed' : 'pointer',
-          }}
+          className={styles.loginButton}
         >
           {submitting ? 'Вход...' : 'Войти'}
         </button>
       </form>
-      <p style={{ marginTop: '1rem' }}>
+      <p className={styles.footer}>
         Нет аккаунта? <Link to="/register">Зарегистрироваться</Link>
       </p>
     </div>

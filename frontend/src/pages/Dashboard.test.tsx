@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { AuthContext } from '../contexts/authState';
+import { AuthContext } from '../contexts/useAuth';
 import { Dashboard } from './Dashboard';
 
 vi.mock('../api/client', () => ({

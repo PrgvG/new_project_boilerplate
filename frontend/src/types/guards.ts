@@ -30,6 +30,14 @@ export function isUserArray(data: unknown): data is User[] {
   return Array.isArray(data) && data.every(isUser);
 }
 
+export function isApiMessage(data: unknown): data is { message: string } {
+  return (
+    typeof data === 'object' &&
+    data !== null &&
+    typeof (data as Record<string, unknown>).message === 'string'
+  );
+}
+
 type LocationStateFrom = { from?: { pathname: string } };
 
 export function hasFromPath(state: unknown): state is LocationStateFrom {

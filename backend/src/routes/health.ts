@@ -3,16 +3,13 @@ import mongoose from 'mongoose';
 
 const router = Router();
 
-router.get('/', (req: Request, res: Response) => {
-  const state = mongoose.connection.readyState;
-  // 0 = disconnected, 1 = connected, 2 = connecting, 3 = disconnecting
-  const isConnected = state === 1;
+router.get('/', (_req: Request, res: Response) => {
+  const isConnected = mongoose.connection.readyState === 1;
 
   res.json({
     status: 'ok',
     message: 'Backend is running',
     database: isConnected ? 'connected' : 'disconnected',
-    databaseState: state,
   });
 });
 

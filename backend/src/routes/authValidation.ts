@@ -41,16 +41,26 @@ export type RegisterInvalid = {
   code: string;
 };
 
+function hasNonObjectIssue(issues: z.ZodIssue[]): boolean {
+  return issues.some(
+    i => (i.message && String(i.message).includes('expected object')) ?? false
+  );
+}
+
+function getIssuePath(issue: z.ZodIssue): string | undefined {
+  const raw = issue.path[0];
+  return typeof raw === 'string' ? raw : undefined;
+}
+
 function registerIssueToCode(issue: z.ZodIssue): string {
-  const path = issue.path[0] as string | undefined;
+  const path = getIssuePath(issue);
   if (path === 'email') {
     return issue.code === 'invalid_format' ? 'INVALID_EMAIL' : 'EMAIL_REQUIRED';
   }
   if (path === 'password') {
-    const msg = String(issue.message ?? '');
-    if (msg.includes('Password is required')) return 'PASSWORD_REQUIRED';
-    if (msg.includes('at least 8')) return 'PASSWORD_TOO_SHORT';
-    return 'PASSWORD_REQUIRED';
+    return issue.code === 'too_small' && issue.minimum === MIN_PASSWORD_LENGTH
+      ? 'PASSWORD_TOO_SHORT'
+      : 'PASSWORD_REQUIRED';
   }
   return 'INVALID_BODY';
 }
@@ -71,13 +81,10 @@ export function validateRegisterBody(
   if (!issue) {
     return { ok: false, error: 'Invalid body', code: 'INVALID_BODY' };
   }
-  const isNonObject = result.error.issues.some(
-    i => (i.message && String(i.message).includes('expected object')) ?? false
-  );
-  if (isNonObject) {
+  if (hasNonObjectIssue(result.error.issues)) {
     return { ok: false, error: 'Invalid body', code: 'INVALID_BODY' };
   }
-  const path = issue.path[0] as string | undefined;
+  const path = getIssuePath(issue);
   const rawMsg = issue.message ?? '';
   const message =
     path === 'email' && String(rawMsg).includes('received undefined')
@@ -113,13 +120,10 @@ export function validateLoginBody(body: unknown): LoginValid | LoginInvalid {
       password: result.data.password,
     };
   }
-  const firstIssue = result.error.issues[0];
-  const isNonObject = result.error.issues.some(
-    i => (i.message && String(i.message).includes('expected object')) ?? false
-  );
-  if (isNonObject) {
+  if (hasNonObjectIssue(result.error.issues)) {
     return { ok: false, error: 'Invalid body', code: 'INVALID_BODY' };
   }
+  const firstIssue = result.error.issues[0];
   const rawMessage = firstIssue?.message ?? '';
   const errorMessage =
     typeof rawMessage === 'string' && rawMessage.includes('received undefined')
