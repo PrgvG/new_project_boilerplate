@@ -6,7 +6,8 @@
   "workspaces": [
     "backend",
     "frontend",
-    "packages/eslint-config"
+    "packages/eslint-config",
+    "packages/tsconfig"
   ],
   "scripts": {
     "dev": "concurrently \"npm run dev --workspace=backend\" \"npm run dev --workspace=frontend\"",
@@ -18,6 +19,7 @@
   },
   "devDependencies": {
     "concurrently": "^9.2.1",
+    "jiti": "^2.6.1",
     "prettier": "^3.6.2"
   }
 }

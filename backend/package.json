@@ -31,6 +31,7 @@
   },
   "devDependencies": {
     "@template/eslint-config": "file:../packages/eslint-config",
+    "@template/tsconfig": "file:../packages/tsconfig",
     "@types/bcryptjs": "^2.4.6",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.5",

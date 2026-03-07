@@ -27,9 +27,9 @@ export default [
     ignores: [
       'dist/**',
       'node_modules/**',
-      '*.config.js',
-      'eslint.config.js',
+      'coverage/**',
       'vite.config.ts',
+      'eslint.config.ts',
     ],
   },
 ];
